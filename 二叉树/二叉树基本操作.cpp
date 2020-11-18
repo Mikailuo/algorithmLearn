@@ -10,7 +10,7 @@ typedef struct bitnode{
 }bitnode,*bittree;
 
 bittree init(elemtype c);           //转化目标数据为对应二叉树的结点 
-void creat(bittree &t,elemtype a[],int i);          //二叉树的创建
+void creat(bittree &t,elemtype a[],int &i,int n);          //二叉树的创建
 bool empty(bittree t);           //判断是否为空树
 void treedepth(bittree t,int h,int &depth);     //前序遍历求树的深度 
 int depth(bittree t);				//树的深度
@@ -27,16 +27,27 @@ void deletechild(bittree &t,bittree e,int LR);                  //对二叉树t中的e
 void show(bittree t);           //遍历二叉树并输出结点数据 
  
 int main(void){
-	elemtype a[SIZE]={'1','2','3','#','4','#','#','5','#','#','6','#','7','#','#'};
+	elemtype a[SIZE]={'1','2','3','#','4','#','#','5','#','#','6','#','7','#','#'};			//按照前序表达式给值，若为完全二叉树只需用顺序表规则转化即可 
 	bittree tree=NULL;
+	bittree input=NULL;
+	bittree goal=NULL;
 	int i=0;
 //	init(tree);
-	creat(tree,a,i);
+	creat(tree,a,i,SIZE);
 	show(tree);
+	cout<<endl;
+	
+	input=init('A');
+	goal=getlocal(tree,'6'); 
+	insertchild(tree,goal,0,input);    //正确无误 
+	goal=getlocal(tree,'6'); 
+	insertchild(tree,goal,1,input);     //会报错，因为6有右孩子 
+	show(tree);
+	
 	return 0;
 }
 
-bittree init(elemtype c){
+bittree init(elemtype c){					//转化目标数据为对应二叉树的结点 
 	bittree t;
 	t=new bitnode;
 	t->data=c;
@@ -44,14 +55,16 @@ bittree init(elemtype c){
 	t->rchild=NULL;
 }
 
-void creat(bittree &t,elemtype a[],int i){			//二叉树的递归创建
-	bittree p=t;
-	if(a[i]=='#')  p=NULL;				//此时说明上一节点该位置处无孩子 
-	else{
-		p=new bitnode;
-		p->data=a[i];
-		creat(p->lchild,a,i+1);            //迭代遍历每一分支 
-		creat(p->rchild,a,i+1);
+void creat(bittree &t,elemtype a[],int &i,int n){			//二叉树的递归创建
+cout<<a[i];
+	if(i<n){							//i=n时说明已到输入数组末端，没有数据填入二叉树了 
+		if(a[i]=='#') {t=NULL; i++;}				//此时说明上一节点该位置处无孩子,i+1; 
+		else{
+			t=new bitnode;
+			t->data=a[i++];
+			creat(t->lchild,a,i,n);            //迭代遍历每一分支,同时i+1 
+			creat(t->rchild,a,i,n);
+		}
 	}
 }
 
