@@ -1,4 +1,4 @@
-//（完全）二叉树的建立
+//二叉树的建立
 
 #include<iostream>
 #define elemtype char
